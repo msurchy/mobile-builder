@@ -293,30 +293,30 @@ class Mobile_Builder_Cart {
 	public function add_to_cart( $request ) {
 
 		try {
-			$product_id     = $request->get_param( 'product_id' );
-			$quantity       = $request->get_param( 'quantity' );
-			$variation_id   = $request->get_param( 'variation_id' );
-			$variation      = $request->get_param( 'variation' );
-			$cart_item_data = $request->get_param( 'cart_item_data' );
+			$product_id        = $request->get_param( 'product_id' );
+			$quantity          = $request->get_param( 'quantity' );
+			$variation_id      = $request->get_param( 'variation_id' );
+			$variation         = $request->get_param( 'variation' );
+			$cart_item_data    = $request->get_param( 'cart_item_data' );
 			$passed_validation = false;
 
-			$passed_validation = apply_filters('woocommerce_add_to_cart_validation', true, $product_id, $quantity);
+			$passed_validation = apply_filters( 'woocommerce_add_to_cart_validation', true, $product_id, $quantity );
 
-			if($passed_validation){
+			if ( $passed_validation ) {
 
 				$cart_item_key = WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $variation, $cart_item_data );
 
 			}
 
-			if (! $passed_validation || ! $cart_item_key ){
-                //if validation failed or add to cart failed, return response from woocommerce
-                return new WP_Error( 'add_to_cart', htmlspecialchars_decode(strip_tags(wc_print_notices(true))), array(
-                        'status' => 403,
-                ) );
-            }
-            
+			if ( ! $passed_validation || ! $cart_item_key ) {
+				//if validation failed or add to cart failed, return response from woocommerce
+				return new WP_Error( 'add_to_cart', htmlspecialchars_decode( strip_tags( wc_print_notices( true ) ) ), array(
+					'status' => 403,
+				) );
+			}
 
-            return WC()->cart->get_cart_item( $cart_item_key );
+
+			return WC()->cart->get_cart_item( $cart_item_key );
 
 		} catch ( \Exception $e ) {
 			//do something when exception is thrown
@@ -431,17 +431,17 @@ class Mobile_Builder_Cart {
 			WC()->customer->set_calculated_shipping( false );
 		}
 
-		if( apply_filters( 'wcfmmp_is_allow_checkout_user_location', true ) ) {
-			if ( !  $request->get_param('wcfmmp_user_location') ) {
-				WC()->customer->set_props( array( 'wcfmmp_user_location' => sanitize_text_field( $request->get_param('wcfmmp_user_location') ) ) );
-				WC()->session->set( '_wcfmmp_user_location', sanitize_text_field( $request->get_param('wcfmmp_user_location') ) );
+		if ( apply_filters( 'wcfmmp_is_allow_checkout_user_location', true ) ) {
+			if ( $request->get_param( 'wcfmmp_user_location' ) ) {
+				WC()->customer->set_props( array( 'wcfmmp_user_location' => sanitize_text_field( $request->get_param( 'wcfmmp_user_location' ) ) ) );
+				WC()->session->set( '_wcfmmp_user_location', sanitize_text_field( $request->get_param( 'wcfmmp_user_location' ) ) );
 			}
-			if ( ! $request->get_param('wcfmmp_user_location_lat') ) {
-				WC()->session->set( '_wcfmmp_user_location_lat', sanitize_text_field( $request->get_param('wcfmmp_user_location_lat') ) );
+			if ( $request->get_param( 'wcfmmp_user_location_lat' ) ) {
+				WC()->session->set( '_wcfmmp_user_location_lat', sanitize_text_field( $request->get_param( 'wcfmmp_user_location_lat' ) ) );
 			}
 
-			if ( ! $request->get_param('wcfmmp_user_location_lng') ) {
-				WC()->session->set( '_wcfmmp_user_location_lng', sanitize_text_field( $request->get_param('wcfmmp_user_location_lng') ) );
+			if ( $request->get_param( 'wcfmmp_user_location_lng' ) ) {
+				WC()->session->set( '_wcfmmp_user_location_lng', sanitize_text_field( $request->get_param( 'wcfmmp_user_location_lng' ) ) );
 			}
 		}
 
