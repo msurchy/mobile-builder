@@ -431,6 +431,20 @@ class Mobile_Builder_Cart {
 			WC()->customer->set_calculated_shipping( false );
 		}
 
+		if( apply_filters( 'wcfmmp_is_allow_checkout_user_location', true ) ) {
+			if ( !  $request->get_param('wcfmmp_user_location') ) {
+				WC()->customer->set_props( array( 'wcfmmp_user_location' => sanitize_text_field( $request->get_param('wcfmmp_user_location') ) ) );
+				WC()->session->set( '_wcfmmp_user_location', sanitize_text_field( $request->get_param('wcfmmp_user_location') ) );
+			}
+			if ( ! $request->get_param('wcfmmp_user_location_lat') ) {
+				WC()->session->set( '_wcfmmp_user_location_lat', sanitize_text_field( $request->get_param('wcfmmp_user_location_lat') ) );
+			}
+
+			if ( ! $request->get_param('wcfmmp_user_location_lng') ) {
+				WC()->session->set( '_wcfmmp_user_location_lng', sanitize_text_field( $request->get_param('wcfmmp_user_location_lng') ) );
+			}
+		}
+
 		WC()->customer->save();
 
 		// Calculate shipping before totals. This will ensure any shipping methods that affect things like taxes are chosen prior to final totals being calculated. Ref: #22708.
