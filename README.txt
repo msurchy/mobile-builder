@@ -44,3 +44,7 @@ Yeah! The app support multi languages
 
 = 1.0 =
 * Initial release.
+
+= 1.0.6 =
+* Add wc validation in the add_to_cart function (Thanks @raaquino)
+* Get checkout user location config
