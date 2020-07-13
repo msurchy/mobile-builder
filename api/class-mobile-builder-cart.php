@@ -298,9 +298,18 @@ class Mobile_Builder_Cart {
 			$variation_id      = $request->get_param( 'variation_id' );
 			$variation         = $request->get_param( 'variation' );
 			$cart_item_data    = $request->get_param( 'cart_item_data' );
-			$passed_validation = false;
 
-			$passed_validation = apply_filters( 'woocommerce_add_to_cart_validation', true, $product_id, $quantity );
+			$product_addons = array(
+				'quantity' => $quantity,
+				'add-to-cart' => $product_id,
+			);
+
+			// Prepare data validate add-ons
+			foreach ($cart_item_data['addons'] as $addon ) {
+				$product_addons['addon-' . $addon['field_name']][] = $addon['value'];
+			}
+
+			$passed_validation = apply_filters( 'woocommerce_add_to_cart_validation', true, $product_id, $quantity, $product_addons );
 
 			if ( $passed_validation ) {
 
@@ -314,7 +323,6 @@ class Mobile_Builder_Cart {
 					'status' => 403,
 				) );
 			}
-
 
 			return WC()->cart->get_cart_item( $cart_item_key );
 
