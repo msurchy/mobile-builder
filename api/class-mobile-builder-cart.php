@@ -78,7 +78,7 @@ class Mobile_Builder_Cart {
 
 		register_rest_route( $this->namespace, 'update-order-review', array(
 			'methods'             => WP_REST_Server::CREATABLE,
-			'callback'            => array( $this, 'mobile_builder_update_order_review' ),
+			'callback'            => array( $this, 'update_order_review' ),
 			'permission_callback' => array( $this, 'user_permissions_check' ),
 		) );
 
@@ -167,6 +167,11 @@ class Mobile_Builder_Cart {
 
 		$theme    = $request->get_param( 'theme' );
 		$currency = $request->get_param( 'currency' );
+
+		$user_id = get_current_user_id();
+		$user = get_user_by( 'id', $user_id );
+		wp_set_current_user( $user_id, $user->user_login );
+		wp_set_auth_cookie( $user_id );
 
 		wp_redirect( wc_get_checkout_url() . "?mobile=1&theme=$theme&currency=$currency" );
 		exit;
@@ -373,7 +378,9 @@ class Mobile_Builder_Cart {
 
 	}
 
-	public function mobile_builder_update_order_review( $request ) {
+	public function update_order_review( $request ) {
+		global $WCFM, $WCFMmp;
+
 //		check_ajax_referer( 'update-order-review', 'security' );
 
 		wc_maybe_define_constant( 'WOOCOMMERCE_CHECKOUT', true );
@@ -404,6 +411,8 @@ class Mobile_Builder_Cart {
 				'billing_address_1' => $request->get_param( 'address' ) ? wc_clean( wp_unslash( $request->get_param( 'address' ) ) ) : null,
 				'billing_address_2' => $request->get_param( 'address_2' ) ? wc_clean( wp_unslash( $request->get_param( 'address_2' ) ) ) : null,
 				'billing_company'   => $request->get_param( 'company' ) ? wc_clean( wp_unslash( $request->get_param( 'company' ) ) ) : null,
+//				'wcfmmp_user_location'   => $request->get_param( 'wcfmmp_user_location' ) ? wc_clean( wp_unslash( $request->get_param( 'wcfmmp_user_location' ) ) ) : null,
+				'wcfmmp_user_location'   => "12 khuat duy tien thanh xuan hanoi"
 			)
 		);
 
@@ -439,19 +448,19 @@ class Mobile_Builder_Cart {
 			WC()->customer->set_calculated_shipping( false );
 		}
 
-		if ( apply_filters( 'wcfmmp_is_allow_checkout_user_location', true ) ) {
-			if ( $request->get_param( 'wcfmmp_user_location' ) ) {
-				WC()->customer->set_props( array( 'wcfmmp_user_location' => sanitize_text_field( $request->get_param( 'wcfmmp_user_location' ) ) ) );
-				WC()->session->set( '_wcfmmp_user_location', sanitize_text_field( $request->get_param( 'wcfmmp_user_location' ) ) );
-			}
-			if ( $request->get_param( 'wcfmmp_user_location_lat' ) ) {
-				WC()->session->set( '_wcfmmp_user_location_lat', sanitize_text_field( $request->get_param( 'wcfmmp_user_location_lat' ) ) );
-			}
-
-			if ( $request->get_param( 'wcfmmp_user_location_lng' ) ) {
-				WC()->session->set( '_wcfmmp_user_location_lng', sanitize_text_field( $request->get_param( 'wcfmmp_user_location_lng' ) ) );
-			}
-		}
+//		if ( apply_filters( 'wcfmmp_is_allow_checkout_user_location', true ) ) {
+//			if ( $request->get_param( 'wcfmmp_user_location' ) ) {
+//				WC()->customer->set_props( array( 'wcfmmp_user_location' => sanitize_text_field( $request->get_param( 'wcfmmp_user_location' ) ) ) );
+//				WC()->session->set( '_wcfmmp_user_location', sanitize_text_field( $request->get_param( 'wcfmmp_user_location' ) ) );
+//			}
+//			if ( $request->get_param( 'wcfmmp_user_location_lat' ) ) {
+//				WC()->session->set( '_wcfmmp_user_location_lat', sanitize_text_field( $request->get_param( 'wcfmmp_user_location_lat' ) ) );
+//			}
+//
+//			if ( $request->get_param( 'wcfmmp_user_location_lng' ) ) {
+//				WC()->session->set( '_wcfmmp_user_location_lng', sanitize_text_field( $request->get_param( 'wcfmmp_user_location_lng' ) ) );
+//			}
+//		}
 
 		WC()->customer->save();
 

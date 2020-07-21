@@ -361,64 +361,6 @@ class Mobile_Builder_Public {
 	}
 
 	/**
-	 * Add product to cart before redirect to checkout page
-	 *
-	 * @author Ngoc Dang
-	 * @since 1.2.0
-	 */
-	public function template_redirect() {
-
-		if ( isset( $_GET['mobile'] ) && isset( $_GET['line_items'] ) ) {
-
-			if ( is_user_logged_in() && isset( $_GET['token'] ) ) {
-
-				$decode = $this->decode( $_GET['token'] );
-
-				if ( ! is_wp_error( $decode ) && get_current_user_id() != $decode->data->user_id ) {
-
-					$user_id = $decode->data->user_id;
-
-					wp_set_current_user( 0 );
-
-					$user = get_user_by( 'id', $user_id );
-					wp_set_current_user( $user_id, $user->user_login );
-					wp_set_auth_cookie( $user_id );
-
-					header( "Refresh:0" );
-				}
-
-			} else if ( is_user_logged_in() && ! isset( $_GET['token'] ) ) {
-
-				wp_logout();
-				wp_set_current_user( 0 );
-				header( "Refresh:0" );
-
-			} else if ( ! is_user_logged_in() && isset( $_GET['token'] ) ) {
-
-				$decode = $this->decode( $_GET['token'] );
-
-				if ( ! is_wp_error( $decode ) ) {
-					$user_id = $decode->data->user_id;
-					$user    = get_user_by( 'id', $user_id );
-					wp_set_current_user( $user_id, $user->user_login );
-					wp_set_auth_cookie( $user_id );
-
-					header( "Refresh:0" );
-				}
-			}
-
-			$line_items = json_decode( html_entity_decode( stripslashes( $_GET['line_items'] ) ), true );
-
-			WC()->session->set( 'refresh_totals', true );
-			WC()->cart->empty_cart();
-
-			foreach ( $line_items as $item ) {
-				WC()->cart->add_to_cart( $item['product_id'], $item['quantity'], $item['variation_id'] );
-			}
-		}
-	}
-
-	/**
 	 * Find the selected Gateway, and process payment
 	 *
 	 * @author Ngoc Dang

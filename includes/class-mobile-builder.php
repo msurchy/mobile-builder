@@ -259,12 +259,6 @@ class Mobile_Builder {
 //		$this->loader->add_filter( 'woocommerce_locate_template', $plugin_public, 'woocommerce_locate_template', 100, 3 );
 
 		/**
-		 * Fillter add to cart before redirect to checkout page
-		 * @since 1.2.0
-		 */
-		$this->loader->add_action( 'template_redirect', $plugin_public, 'template_redirect' );
-
-		/**
 		 * Add style for checkout page
 		 * @since 1.2.0
 		 */
