@@ -76,7 +76,36 @@ class Mobile_Builder_Product {
 			'callback'            => array( $this, 'get_items' ),
 			'permission_callback' => array( $products, 'get_items_permissions_check' ),
 		) );
+		register_rest_route(  'wc/v3/products', '/(?P<product_id>[a-zA-Z0-9-]+)/variable', array(
+			'methods' => 'GET',
+			'callback' => array( $this, 'product_get_all_variable_data' )
+    	));
 
+	}
+
+	/**
+	 *
+	 * Get list products variable
+	 *
+	 * @param $request
+	 *
+	 * @return array|WP_Error|WP_REST_Response
+	 */
+	function product_get_all_variable_data($request){
+		$product_id = $request->get_param('product_id');
+		$handle = new WC_Product_Variable($product_id);
+		$variation_attributes = $handle->get_variation_attributes();
+		$variation_attributes_data = array();
+		$variation_attributes_label = array();
+		foreach($variation_attributes as $key => $attribute){
+			$variation_attributes_result['attribute_' . sanitize_title( $key )] = $attribute;
+			$variation_attributes_label['attribute_' . sanitize_title( $key )] = $key;
+		}
+		return array(
+			'variation_attributes_label' => $variation_attributes_label, 
+			'variation_attributes'=> $variation_attributes_result, 
+			'available_variations' => $handle->get_available_variations()
+		);
 	}
 
 	/**
