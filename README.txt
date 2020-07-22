@@ -50,5 +50,6 @@ Yeah! The app support multi languages
 * Get checkout user location config
 
 = 1.1.0 =
-* Add API get variable info
-* Fix: checkout via webview
+* Add REST API get variable info
+* Fixed: checkout via webview
+* Fixed: login with phone number

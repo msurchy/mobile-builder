@@ -1039,10 +1039,9 @@ class Mobile_Builder_Public {
 				);
 			}
 
+			add_user_meta( $user_id, 'digt_countrycode', $digt_countrycode, true );
+			add_user_meta( $user_id, 'digits_phone_no', $digits_phone_no, true );
 			add_user_meta( $user_id, 'digits_phone', $digits_phone, true );
-			add_user_meta( $user_id, 'digt_countrycode', $digits_phone, true );
-			add_user_meta( $user_id, 'digits_phone_no', $digits_phone, true );
-
 		}
 
 		// Subscribe
