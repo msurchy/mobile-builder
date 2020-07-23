@@ -76,10 +76,11 @@ class Mobile_Builder_Product {
 			'callback'            => array( $this, 'get_items' ),
 			'permission_callback' => array( $products, 'get_items_permissions_check' ),
 		) );
-		register_rest_route(  'wc/v3/products', '/(?P<product_id>[a-zA-Z0-9-]+)/variable', array(
-			'methods' => 'GET',
+
+		register_rest_route( $namespace, 'variable/(?P<product_id>[a-zA-Z0-9-]+)', array(
+			'methods'  => 'GET',
 			'callback' => array( $this, 'product_get_all_variable_data' )
-    	));
+		) );
 
 	}
 
