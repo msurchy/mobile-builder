@@ -53,3 +53,8 @@ Yeah! The app support multi languages
 * Add REST API get variable info
 * Fixed: checkout via webview
 * Fixed: login with phone number
+
+= 1.1.2 =
+* Add Import Template from Rnlab App Control
+* Add Import Template from Oreo fashion app
+* Add Import Template from Lekima app
