@@ -412,7 +412,7 @@ class Mobile_Builder_Cart {
 				'billing_address_2' => $request->get_param( 'address_2' ) ? wc_clean( wp_unslash( $request->get_param( 'address_2' ) ) ) : null,
 				'billing_company'   => $request->get_param( 'company' ) ? wc_clean( wp_unslash( $request->get_param( 'company' ) ) ) : null,
 //				'wcfmmp_user_location'   => $request->get_param( 'wcfmmp_user_location' ) ? wc_clean( wp_unslash( $request->get_param( 'wcfmmp_user_location' ) ) ) : null,
-				'wcfmmp_user_location'   => "12 khuat duy tien thanh xuan hanoi"
+//				'wcfmmp_user_location'   => "12 khuat duy tien thanh xuan hanoi"
 			)
 		);
 

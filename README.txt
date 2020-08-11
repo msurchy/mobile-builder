@@ -42,19 +42,25 @@ Yeah! The app support multi languages
 
 == Changelog ==
 
-= 1.0 =
-* Initial release.
+= 1.1.3 =
 
-= 1.0.6 =
-* Add wc validation in the add_to_cart function (Thanks @raaquino)
-* Get checkout user location config
+* Fixed: Undefined index: vendor_id
+* Fixed: Undefined index: lat and lng
+
+= 1.1.2 =
+* Add Import Template from Rnlab App Control
+* Add Import Template from Oreo fashion app
+* Add Import Template from Lekima app
 
 = 1.1.0 =
 * Add REST API get variable info
 * Fixed: checkout via webview
 * Fixed: login with phone number
 
-= 1.1.2 =
-* Add Import Template from Rnlab App Control
-* Add Import Template from Oreo fashion app
-* Add Import Template from Lekima app
+= 1.0.6 =
+* Add wc validation in the add_to_cart function (Thanks @raaquino)
+* Get checkout user location config
+
+= 1.0 =
+* Initial release.
+

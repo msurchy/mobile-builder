@@ -276,9 +276,8 @@ class Mobile_Builder_Vendor {
 
 		global $wpdb;
 
-		$vendor_id = $_GET['vendor_id'];
-
-		if ( $vendor_id ) {
+		if ( ! empty ( $_GET['vendor_id'] ) ) {
+			$vendor_id     = $_GET['vendor_id'];
 			$args['where'] .= " AND $wpdb->posts.post_author = $vendor_id";
 		}
 
@@ -298,11 +297,11 @@ class Mobile_Builder_Vendor {
 
 		global $wpdb;
 
-		$lat      = $_GET['lat'];
-		$lng      = $_GET['lng'];
-		$distance = ! empty( $_GET['radius'] ) ? esc_sql( $_GET['radius'] ) : 50;
+		if ( ! empty( $_GET['lat'] ) && ! empty( $_GET['lng'] ) ) {
 
-		if ( $lat && $lng ) {
+			$lat      = $_GET['lat'];
+			$lng      = $_GET['lng'];
+			$distance = ! empty( $_GET['radius'] ) ? esc_sql( $_GET['radius'] ) : 50;
 
 			$earth_radius = 6371;
 			$units        = 'km';
