@@ -169,7 +169,7 @@ class Mobile_Builder_Cart {
 		$currency = $request->get_param( 'currency' );
 
 		$user_id = get_current_user_id();
-		$user = get_user_by( 'id', $user_id );
+		$user    = get_user_by( 'id', $user_id );
 		wp_set_current_user( $user_id, $user->user_login );
 		wp_set_auth_cookie( $user_id );
 
@@ -256,7 +256,11 @@ class Mobile_Builder_Cart {
 
 		foreach ( $items as $cart_item_key => $cart_item ) {
 			$_product  = $cart_item['data'];
-			$vendor_id = wcfm_get_vendor_id_by_post( $_product->get_id() );
+			$vendor_id = '';
+
+			if ( function_exists( 'wcfm_get_vendor_id_by_post' ) ) {
+				$vendor_id = wcfm_get_vendor_id_by_post( $_product->get_id() );
+			}
 
 			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $_product->get_id() ), 'single-post-thumbnail' );
 			if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 ) {
@@ -298,20 +302,20 @@ class Mobile_Builder_Cart {
 	public function add_to_cart( $request ) {
 
 		try {
-			$product_id        = $request->get_param( 'product_id' );
-			$quantity          = $request->get_param( 'quantity' );
-			$variation_id      = $request->get_param( 'variation_id' );
-			$variation         = $request->get_param( 'variation' );
-			$cart_item_data    = $request->get_param( 'cart_item_data' );
+			$product_id     = $request->get_param( 'product_id' );
+			$quantity       = $request->get_param( 'quantity' );
+			$variation_id   = $request->get_param( 'variation_id' );
+			$variation      = $request->get_param( 'variation' );
+			$cart_item_data = $request->get_param( 'cart_item_data' );
 
 			$product_addons = array(
-				'quantity' => $quantity,
+				'quantity'    => $quantity,
 				'add-to-cart' => $product_id,
 			);
 
 			// Prepare data validate add-ons
-			foreach ($cart_item_data['addons'] as $addon ) {
-				$product_addons['addon-' . $addon['field_name']][] = $addon['value'];
+			foreach ( $cart_item_data['addons'] as $addon ) {
+				$product_addons[ 'addon-' . $addon['field_name'] ][] = $addon['value'];
 			}
 
 			$passed_validation = apply_filters( 'woocommerce_add_to_cart_validation', true, $product_id, $quantity, $product_addons );
