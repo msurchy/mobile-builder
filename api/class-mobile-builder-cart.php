@@ -204,13 +204,15 @@ class Mobile_Builder_Cart {
 			require_once( WC_ABSPATH . 'includes/wc-cart-functions.php' );
 			require_once( WC_ABSPATH . 'includes/wc-notice-functions.php' );
 
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-mobile-builder-session-handler.php';
+
 			// Disable cookie authentication REST check and only if site is secure.
 			if ( is_ssl() ) {
 				remove_filter( 'rest_authentication_errors', 'rest_cookie_check_errors', 100 );
 			}
 
 			if ( is_null( WC()->session ) ) {
-				$session_class = 'WC_Session_Handler';
+				$session_class = 'Mobile_Builder_Session_Handler';
 
 				if ( false === strpos( $session_class, '\\' ) ) {
 					$session_class = '\\' . $session_class;
@@ -736,12 +738,6 @@ class Mobile_Builder_Cart {
 	 * @since 1.0.0
 	 */
 	public function user_permissions_check( $request ) {
-		$isLogin = is_user_logged_in();
-
-		if ( ! $isLogin ) {
-			return new WP_Error( 'mobile_builder_can_not_add_to_cart', __( 'Sorry, you need login to add to cart.', 'mobile-builder' ) );
-		}
-
 		return true;
 	}
 }
