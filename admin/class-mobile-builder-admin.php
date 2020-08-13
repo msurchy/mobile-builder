@@ -121,7 +121,7 @@ class Mobile_Builder_Admin {
 			array(
 				'methods'  => \WP_REST_Server::READABLE,
 				'callback' => array( $this, 'get_template_config' ),
-				// 'permission_callback'   => array( $this, 'admin_permissions_check' ),
+				 'permission_callback'   => '__return_true',
 			),
 		) );
 
@@ -156,6 +156,7 @@ class Mobile_Builder_Admin {
 			array(
 				'methods'  => \WP_REST_Server::READABLE,
 				'callback' => array( $this, 'get_configs' ),
+				'permission_callback'   => '__return_true',
 			),
 		) );
 

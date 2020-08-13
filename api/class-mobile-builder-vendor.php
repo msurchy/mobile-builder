@@ -69,41 +69,49 @@ class Mobile_Builder_Vendor {
 			array(
 				'methods'  => WP_REST_Server::READABLE,
 				'callback' => array( $this, 'vendors' ),
+				'permission_callback'   => '__return_true',
 			),
 			array(
 				'methods'  => WP_REST_Server::CREATABLE,
 				'callback' => array( $this, 'vendors' ),
+				'permission_callback'   => '__return_true',
 			)
 		) );
 
 		register_rest_route( $namespace, 'directions', array(
 			'methods'  => WP_REST_Server::READABLE,
 			'callback' => array( $this, 'directions' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'vendor' . '/(?P<id>[\d]+)', array(
 			'methods'  => WP_REST_Server::READABLE,
 			'callback' => array( $this, 'vendor' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'delivery-boy-delivery-stat', array(
 			'methods'  => WP_REST_Server::READABLE,
 			'callback' => array( $this, 'delivery_boy_delivery_stat' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'messages-mark-read', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'messages_mark_read' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'messages-delete', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'messages_delete' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'mark-order-delivered', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'mark_order_delivered' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 	}

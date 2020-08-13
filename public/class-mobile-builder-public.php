@@ -106,6 +106,7 @@ class Mobile_Builder_Public {
 		register_rest_route( $namespace, 'reviews', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $review, 'create_item' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		/**
@@ -120,86 +121,103 @@ class Mobile_Builder_Public {
 		register_rest_route( $namespace, 'token', array(
 			'methods'  => WP_REST_Server::READABLE,
 			'callback' => array( $this, 'app_token' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'login', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'login' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'logout', array(
 			'methods'  => WP_REST_Server::READABLE,
 			'callback' => array( $this, 'logout' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'login-otp', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'login_otp' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'current', array(
 			'methods'  => WP_REST_Server::READABLE,
 			'callback' => array( $this, 'current' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'facebook', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'login_facebook' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'google', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'login_google' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'apple', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'login_apple' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'register', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'register' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'lost-password', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'retrieve_password' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'settings', array(
 			'methods'  => WP_REST_Server::READABLE,
 			'callback' => array( $this, 'settings' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'change-password', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'change_password' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'update-location', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'update_location' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'zones', array(
 			'methods'  => WP_REST_Server::READABLE,
 			'callback' => array( $this, 'zones' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'get-continent-code-for-country', array(
 			'methods'  => WP_REST_Server::READABLE,
 			'callback' => array( $this, 'get_continent_code_for_country' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'payment-stripe', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'payment_stripe' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( $namespace, 'payment-hayperpay', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'payment_hayperpay' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		/**
@@ -211,6 +229,7 @@ class Mobile_Builder_Public {
 		register_rest_route( $namespace, 'process_payment', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'rnlab_process_payment' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_field( 'post', '_categories', array(
@@ -248,6 +267,7 @@ class Mobile_Builder_Public {
 		register_rest_route( $namespace, 'check-phone-number', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'mbd_check_phone_number' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		/**
@@ -259,6 +279,7 @@ class Mobile_Builder_Public {
 		register_rest_route( $namespace, 'check-info', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'mbd_validate_user_info' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		/**
@@ -270,6 +291,7 @@ class Mobile_Builder_Public {
 		register_rest_route( $namespace, 'categories', array(
 			'methods'  => WP_REST_Server::READABLE,
 			'callback' => array( $this, 'categories' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 	}

@@ -69,6 +69,7 @@ class Mobile_Builder_Product {
 		register_rest_route( $namespace, 'rating-count', array(
 			'methods'  => 'GET',
 			'callback' => array( $this, 'rating_count' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 		register_rest_route( 'wc/v3', 'products-distance', array(
@@ -79,7 +80,8 @@ class Mobile_Builder_Product {
 
 		register_rest_route( $namespace, 'variable/(?P<product_id>[a-zA-Z0-9-]+)', array(
 			'methods'  => 'GET',
-			'callback' => array( $this, 'product_get_all_variable_data' )
+			'callback' => array( $this, 'product_get_all_variable_data' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 	}

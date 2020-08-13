@@ -133,6 +133,7 @@ class Mobile_Builder_Cart {
 		register_rest_route( $this->namespace, 'analytic', array(
 			'methods'  => WP_REST_Server::CREATABLE,
 			'callback' => array( $this, 'analytic' ),
+			'permission_callback'   => '__return_true',
 		) );
 
 	}
