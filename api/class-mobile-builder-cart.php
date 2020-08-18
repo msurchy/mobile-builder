@@ -168,13 +168,14 @@ class Mobile_Builder_Cart {
 
 		$theme    = $request->get_param( 'theme' );
 		$currency = $request->get_param( 'currency' );
+		$cart_key = $request->get_param( 'cart-key' );
 
 		$user_id = get_current_user_id();
 		$user    = get_user_by( 'id', $user_id );
 		wp_set_current_user( $user_id, $user->user_login );
 		wp_set_auth_cookie( $user_id );
 
-		wp_redirect( wc_get_checkout_url() . "?mobile=1&theme=$theme&currency=$currency" );
+		wp_redirect( wc_get_checkout_url() . "?mobile=1&theme=$theme&currency=$currency&cart-key=$cart_key" );
 		exit;
 	}
 
@@ -186,7 +187,7 @@ class Mobile_Builder_Cart {
 		global $wpdb;
 		$table = $wpdb->prefix . MOBILE_BUILDER_TABLE_NAME . '_carts';
 
-		if ( ! isset( $_REQUEST['cart_key'] ) ) {
+		if ( ! isset( $_REQUEST['cart-key'] ) ) {
 			return;
 		}
 
@@ -196,7 +197,7 @@ class Mobile_Builder_Cart {
 
 		wc_nocache_headers();
 
-		$cart_key = trim( wp_unslash( $_REQUEST['cart_key'] ) );
+		$cart_key = trim( wp_unslash( $_REQUEST['cart-key'] ) );
 
 		$value = $wpdb->get_var( $wpdb->prepare( "SELECT cart_value FROM $table WHERE cart_key = %s", $cart_key ) );
 
