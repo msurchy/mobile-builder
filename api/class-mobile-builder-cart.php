@@ -178,17 +178,38 @@ class Mobile_Builder_Cart {
 		exit;
 	}
 
-	public function simulate_as_not_rest( $is_rest_api_request ) {
+	/**
+	 * Restore cart for web
+	 */
+	public function load_cart_action() {
 
-		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
-			return $is_rest_api_request;
+		global $wpdb;
+		$table = $wpdb->prefix . MOBILE_BUILDER_TABLE_NAME . '_carts';
+
+		if ( ! isset( $_REQUEST['cart_key'] ) ) {
+			return;
 		}
 
-		if ( false === strpos( $_SERVER['REQUEST_URI'], $this->namespace ) ) {
-			return $is_rest_api_request;
+		if ( WC()->is_rest_api_request() ) {
+			return;
 		}
 
-		return false;
+		wc_nocache_headers();
+
+		$cart_key = trim( wp_unslash( $_REQUEST['cart_key'] ) );
+
+		$value = $wpdb->get_var( $wpdb->prepare( "SELECT cart_value FROM $table WHERE cart_key = %s", $cart_key ) );
+
+		$cart_data = maybe_unserialize( $value );
+
+		WC()->session->set( 'cart', maybe_unserialize( $cart_data['cart'] ) );
+		WC()->session->set( 'cart_totals', maybe_unserialize( $cart_data['cart_totals'] ) );
+		WC()->session->set( 'applied_coupons', maybe_unserialize( $cart_data['applied_coupons'] ) );
+		WC()->session->set( 'coupon_discount_totals', maybe_unserialize( $cart_data['coupon_discount_totals'] ) );
+		WC()->session->set( 'coupon_discount_tax_totals', maybe_unserialize( $cart_data['coupon_discount_tax_totals'] ) );
+		WC()->session->set( 'removed_cart_contents', maybe_unserialize( $cart_data['removed_cart_contents'] ) );
+		WC()->session->set( 'customer', maybe_unserialize( $cart_data['customer'] ) );
+
 	}
 
 	public function mobile_builder_woocommerce_persistent_cart_enabled() {

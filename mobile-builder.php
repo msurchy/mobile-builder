@@ -36,19 +36,6 @@ define( 'MOBILE_BUILDER_PLUGIN_NAME', 'mobile-builder' );
 
 define( 'MOBILE_BUILDER_TABLE_NAME', 'mobile_builder' );
 
-
-/**
- * Handle php section
- */
-add_filter( 'woocommerce_session_handler', function( $handler ) {
-	// TODO: check only rest api
-	if ( class_exists( 'WC_Session' ) ) {
-		include __DIR__ . '/includes/class-mobile-builder-session-handler.php';
-		$handler = 'Mobile_Builder_Session_Handler';
-	}
-	return $handler;
-} );
-
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-mobile-builder-activator.php
