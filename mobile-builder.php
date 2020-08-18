@@ -10,7 +10,7 @@
  * Plugin Name:       Mobile Builder
  * Plugin URI:        https://doc-oreo.rnlab.io
  * Description:       The most advanced drag & drop app builder. Create multi templates and app controls.
- * Version:           1.1.3
+ * Version:           1.1.4
  * Author:            Rnlab.io
  * Author URI:        https://rnlab.io
  * License:           GPL-2.0+
@@ -40,14 +40,14 @@ define( 'MOBILE_BUILDER_TABLE_NAME', 'mobile_builder' );
 /**
  * Handle php section
  */
-//add_filter( 'woocommerce_session_handler', function( $handler ) {
-//	// TODO: check only rest api
-//	if ( class_exists( 'WC_Session' ) ) {
-//		include __DIR__ . '/includes/class-mobile-builder-session-handler.php';
-//		$handler = 'Mobile_Builder_Session_Handler';
-//	}
-//	return $handler;
-//} );
+add_filter( 'woocommerce_session_handler', function( $handler ) {
+	// TODO: check only rest api
+	if ( class_exists( 'WC_Session' ) ) {
+		include __DIR__ . '/includes/class-mobile-builder-session-handler.php';
+		$handler = 'Mobile_Builder_Session_Handler';
+	}
+	return $handler;
+} );
 
 /**
  * The code that runs during plugin activation.
