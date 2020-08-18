@@ -57,9 +57,9 @@ class Mobile_Builder_Activator {
 		}
 
 		// Queries create carts table
-		$table_carts =
-			"CREATE TABLE {$table_name_carts} (
+		$table_carts = "CREATE TABLE {$table_name_carts} (
 					cart_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+					blog_id INT NOT NULL,
 					cart_key char(42) NOT NULL,
 					cart_value longtext NOT NULL,
 					cart_expiry BIGINT UNSIGNED NOT NULL,

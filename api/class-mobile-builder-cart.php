@@ -131,9 +131,9 @@ class Mobile_Builder_Cart {
 		) );
 
 		register_rest_route( $this->namespace, 'analytic', array(
-			'methods'  => WP_REST_Server::CREATABLE,
-			'callback' => array( $this, 'analytic' ),
-			'permission_callback'   => '__return_true',
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'analytic' ),
+			'permission_callback' => '__return_true',
 		) );
 
 	}
@@ -231,11 +231,13 @@ class Mobile_Builder_Cart {
 				$customer_id = strval( get_current_user_id() );
 
 				// If the ID is not ZERO, then the user is logged in.
-				if ( $customer_id > 0 ) {
-					WC()->customer = new WC_Customer( $customer_id ); // Loads from database.
-				} else {
-					WC()->customer = new WC_Customer( $customer_id, true ); // Loads from session.
-				}
+//				if ( $customer_id > 0 ) {
+//					WC()->customer = new WC_Customer( $customer_id ); // Loads from database.
+//				} else {
+//					WC()->customer = new WC_Customer( $customer_id, true ); // Loads from session.
+//				}
+
+				WC()->customer = new WC_Customer( $customer_id, true ); // Loads from session
 
 				add_action( 'shutdown', array( WC()->customer, 'save' ), 10 );
 			}
@@ -317,8 +319,10 @@ class Mobile_Builder_Cart {
 			);
 
 			// Prepare data validate add-ons
-			foreach ( $cart_item_data['addons'] as $addon ) {
-				$product_addons[ 'addon-' . $addon['field_name'] ][] = $addon['value'];
+			if ( ! is_null( $cart_item_data['addons'] ) ) {
+				foreach ( $cart_item_data['addons'] as $addon ) {
+					$product_addons[ 'addon-' . $addon['field_name'] ][] = $addon['value'];
+				}
 			}
 
 			$passed_validation = apply_filters( 'woocommerce_add_to_cart_validation', true, $product_id, $quantity, $product_addons );
@@ -336,7 +340,9 @@ class Mobile_Builder_Cart {
 				) );
 			}
 
-			return WC()->cart->get_cart_item( $cart_item_key );
+			return array(
+				"cart_key" => WC()->session->get_cart_key(),
+			);
 
 		} catch ( \Exception $e ) {
 			//do something when exception is thrown

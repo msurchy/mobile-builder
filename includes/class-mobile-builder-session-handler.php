@@ -2,7 +2,6 @@
 
 defined( 'ABSPATH' ) || exit;
 
-use WC_Session;
 
 /**
  * Session handler class.
@@ -10,17 +9,32 @@ use WC_Session;
 class Mobile_Builder_Session_Handler extends WC_Session {
 
 	/**
-	 * Key for the session.
+	 * Table name for cart data.
 	 *
-	 * @var string
+	 * @var string Custom cart table name
 	 */
-	protected $session_key;
+	protected $_table;
+
+	/**
+	 * Stores cart expiry.
+	 *
+	 * @var string cart due to expire timestamp
+	 */
+	protected $_cart_expiring;
+
+	/**
+	 * Stores cart due to expire timestamp.
+	 *
+	 * @var string cart expiration timestamp
+	 */
+	protected $_cart_expiration;
 
 	/**
 	 * Constructor for the session class.
 	 */
 	public function __construct() {
-		$this->session_key = 'wc_session_' . get_current_blog_id();
+		global $wpdb;
+		$this->_table      = $wpdb->prefix . MOBILE_BUILDER_TABLE_NAME . '_carts';
 	}
 
 	/**
@@ -28,22 +42,15 @@ class Mobile_Builder_Session_Handler extends WC_Session {
 	 */
 	public function init() {
 
-		if ( headers_sent() ) {
-			headers_sent( $file, $line );
-			trigger_error( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
-				sprintf(
-					'Session handler cannot start session - headers sent by %s on line $d',
-					esc_html( $file ),
-					esc_html( $line )
-				),
-				E_USER_NOTICE
-			);
+		$this->_cart_expiration = date( 'Y-m-d H:i:s' );
 
-			return;
+		$customer_id = $this->generate_customer_id();
+
+		if ( isset( $_REQUEST['cart_key'] ) ) {
+			$customer_id = $_REQUEST['cart_key'];
 		}
 
-		session_start(); // phpcs:ignore WordPress.VIP.SessionFunctionsUsage.session_session_start
-		$this->_data = $_SESSION[ $this->session_key ]; // phpcs:ignore WordPress.VIP.SessionVariableUsage.SessionVarsProhibited
+		$this->restore_data( $customer_id );
 
 		add_action( 'shutdown', array( $this, 'save_data' ), 20 );
 		add_action( 'wp_logout', array( $this, 'destroy_session' ) );
@@ -51,6 +58,33 @@ class Mobile_Builder_Session_Handler extends WC_Session {
 		if ( ! is_user_logged_in() ) {
 			add_filter( 'nonce_user_logged_out', array( $this, 'nonce_user_logged_out' ) );
 		}
+	}
+
+	/**
+	 *
+	 * Get cart key saved in database
+	 *
+	 * @return string
+	 */
+	public function get_cart_key() {
+		return $this->_customer_id;
+	}
+
+	/**
+	 *
+	 * Restore cart
+	 *
+	 * @param $customer_id
+	 */
+	public function restore_data( $customer_id ) {
+		global $wpdb;
+
+		$this->_customer_id = $customer_id;
+
+		$value = $wpdb->get_var( $wpdb->prepare( "SELECT cart_value FROM $this->_table WHERE cart_key = %s", $customer_id ) );
+
+		$this->_data = maybe_unserialize( $value );
+
 	}
 
 	/**
@@ -80,10 +114,23 @@ class Mobile_Builder_Session_Handler extends WC_Session {
 	 * Save data.
 	 */
 	public function save_data() {
-		// Dirty if something changed - prevents saving nothing new.
+
+		global $wpdb;
+
 		if ( $this->_dirty ) {
-			$_SESSION[ $this->session_key ] = $this->_data; // phpcs:ignore WordPress.VIP.SessionVariableUsage.SessionVarsProhibited
-			$this->_dirty                   = false;
+
+			$wpdb->query(
+				$wpdb->prepare(
+					"INSERT INTO {$this->_table} (`cart_key`, `blog_id`, `cart_value`, `cart_expiry`) VALUES (%s, %s, %s, %d)
+ 					ON DUPLICATE KEY UPDATE `cart_key` = VALUES(`cart_key`), `cart_value` = VALUES(`cart_value`), `cart_expiry` = VALUES(`cart_expiry`)",
+					$this->_customer_id,
+					get_current_blog_id(),
+					maybe_serialize( $this->_data ),
+					$this->_cart_expiration
+				)
+			);
+
+			$this->_dirty = false;
 		}
 	}
 
@@ -91,7 +138,6 @@ class Mobile_Builder_Session_Handler extends WC_Session {
 	 * Destroy all session data.
 	 */
 	public function destroy_session() {
-		unset( $_SESSION[ $this->session_key ] ); // phpcs:ignore WordPress.VIP.SessionVariableUsage.SessionVarsProhibited
 		wc_empty_cart();
 		$this->_data  = array();
 		$this->_dirty = false;
