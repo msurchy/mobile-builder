@@ -103,6 +103,8 @@ function mobile_builder_headers() {
 		return apache_request_headers();
 	} else {
 
+		$out = array();
+
 		foreach ( $_SERVER as $key => $value ) {
 			if ( substr( $key, 0, 5 ) == "HTTP_" ) {
 				$key         = str_replace( " ", "-",
@@ -115,4 +117,20 @@ function mobile_builder_headers() {
 
 		return $out;
 	}
+}
+
+/**
+ * Returns true if we are making a REST API request for Mobile builder.
+ *
+ * @return  bool
+ */
+function mobile_builder_is_rest_api_request() {
+	if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+		return false;
+	}
+
+	$rest_prefix         = trailingslashit( rest_get_url_prefix() );
+	$is_rest_api_request = ( false !== strpos( $_SERVER['REQUEST_URI'], $rest_prefix . 'mobile-builder/' ) );
+
+	return $is_rest_api_request;
 }
