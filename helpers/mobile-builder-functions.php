@@ -95,6 +95,22 @@ function mobile_builder_send_notification( $fields, $api_key ) {
 }
 
 /**
+ * Returns true if we are making a REST API request for Mobile builder.
+ *
+ * @return  bool
+ */
+function mobile_builder_is_rest_api_request() {
+	if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+		return false;
+	}
+
+	$rest_prefix         = trailingslashit( rest_get_url_prefix() );
+	$is_rest_api_request = ( false !== strpos( $_SERVER['REQUEST_URI'], $rest_prefix . 'mobile-builder/' ) );
+
+	return $is_rest_api_request;
+}
+
+/**
  * Get request headers
  * @return array|false
  */
@@ -102,6 +118,8 @@ function mobile_builder_headers() {
 	if ( function_exists( 'apache_request_headers' ) ) {
 		return apache_request_headers();
 	} else {
+
+		$out = array();
 
 		foreach ( $_SERVER as $key => $value ) {
 			if ( substr( $key, 0, 5 ) == "HTTP_" ) {

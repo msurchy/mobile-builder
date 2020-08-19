@@ -42,7 +42,7 @@ class Mobile_Builder_Session_Handler extends WC_Session {
 	 */
 	public function init() {
 
-		$this->_cart_expiration = date( 'Y-m-d H:i:s' );
+		$this->_cart_expiration = time();
 
 		$customer_id = $this->generate_customer_id();
 
