@@ -148,6 +148,7 @@ class Mobile_Builder {
 		 * The class responsible for defining all actions that occur in the api
 		 * side of the site.
 		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'api/class-mobile-builder-auth.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'api/class-mobile-builder-cart.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'api/class-mobile-builder-vendor.php';
 
@@ -204,6 +205,9 @@ class Mobile_Builder {
 
 
 	private function define_api_hooks() {
+		// Auth
+		$plugin_auth = new Mobile_Builder_Auth( $this->get_plugin_name(), $this->get_version() );
+		$this->loader->add_action( 'rest_api_init', $plugin_auth, 'add_api_routes', 10 );
 
 		// Cart
 		$plugin_cart = new Mobile_Builder_Cart( $this->get_plugin_name(), $this->get_version() );
@@ -215,7 +219,7 @@ class Mobile_Builder {
 		// Vendor
 		$plugin_api = new Mobile_Builder_Vendor( $this->get_plugin_name(), $this->get_version() );
 		$this->loader->add_action( 'rest_api_init', $plugin_api, 'add_api_routes', 10 );
-//		$this->loader->add_filter( 'posts_clauses', $plugin_api, 'mbd_product_list_geo_location_filter_post_clauses', 500, 2 );
+		// $this->loader->add_filter( 'posts_clauses', $plugin_api, 'mbd_product_list_geo_location_filter_post_clauses', 500, 2 );
 		$this->loader->add_filter( 'posts_clauses', $plugin_api, 'mbd_product_list_by_vendor', 501, 2 );
 		$this->loader->add_filter( 'posts_clauses', $plugin_api, 'mbd_product_distance', 501, 2 );
 		$this->loader->add_action( 'wcfmd_after_delivery_boy_assigned', $plugin_api, 'delivery_boy_assigned_notification', 10, 6 );

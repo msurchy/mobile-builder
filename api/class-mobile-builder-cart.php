@@ -124,12 +124,6 @@ class Mobile_Builder_Cart {
 			'permission_callback' => array( $this, 'user_permissions_check' ),
 		) );
 
-		register_rest_route( $this->namespace, 'auto-login', array(
-			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => array( $this, 'auto_login' ),
-			'permission_callback' => array( $this, 'user_permissions_check' ),
-		) );
-
 		register_rest_route( $this->namespace, 'analytic', array(
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => array( $this, 'analytic' ),
@@ -162,21 +156,6 @@ class Mobile_Builder_Cart {
 		}
 
 		return $data;
-	}
-
-	public function auto_login( $request ) {
-
-		$theme    = $request->get_param( 'theme' );
-		$currency = $request->get_param( 'currency' );
-		$cart_key = $request->get_param( 'cart-key' );
-
-		$user_id = get_current_user_id();
-		$user    = get_user_by( 'id', $user_id );
-		wp_set_current_user( $user_id, $user->user_login );
-		wp_set_auth_cookie( $user_id );
-
-		wp_redirect( wc_get_checkout_url() . "?mobile=1&theme=$theme&currency=$currency&cart-key=$cart_key" );
-		exit;
 	}
 
 	/**
