@@ -195,6 +195,34 @@ class Mobile_Builder_Cart {
 		WC()->session->set( 'removed_cart_contents', maybe_unserialize( $cart_data['removed_cart_contents'] ) );
 		WC()->session->set( 'customer', maybe_unserialize( $cart_data['customer'] ) );
 
+		if ( ! session_id() ) {
+			session_start();
+		}
+		$_SESSION['cart-key'] = $cart_key;
+
+	}
+
+	/**
+	 *
+	 * Handle action after user go to checkout success page
+	 *
+	 * @param $order_id
+	 *
+	 */
+	public function handle_checkout_success( $order_id ) {
+		if ( ! session_id() ) {
+			session_start();
+		}
+
+		if ( ! is_null( $_SESSION['cart-key'] ) ) {
+			global $wpdb;
+
+			// Delete cart from database.
+			$wpdb->delete( $wpdb->prefix . MOBILE_BUILDER_TABLE_NAME . '_carts', array( 'cart_key' => $_SESSION['cart-key'] ) );
+
+			// unset cart key in session
+			unset( $_SESSION['cart-key'] );
+		}
 	}
 
 	public function mobile_builder_woocommerce_persistent_cart_enabled() {

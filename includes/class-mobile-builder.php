@@ -215,6 +215,7 @@ class Mobile_Builder {
 		$this->loader->add_action( 'wp_loaded', $plugin_cart, 'mobile_builder_pre_car_rest_api', 5 );
 		$this->loader->add_filter( 'woocommerce_persistent_cart_enabled', $plugin_cart, 'mobile_builder_woocommerce_persistent_cart_enabled' );
 		$this->loader->add_action( 'woocommerce_load_cart_from_session', $plugin_cart, 'load_cart_action', 10 );
+		$this->loader->add_action( 'woocommerce_thankyou', $plugin_cart, 'handle_checkout_success', 10 );
 
 		// Vendor
 		$plugin_api = new Mobile_Builder_Vendor( $this->get_plugin_name(), $this->get_version() );
