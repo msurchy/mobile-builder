@@ -34,7 +34,7 @@ class Mobile_Builder_Session_Handler extends WC_Session {
 	 */
 	public function __construct() {
 		global $wpdb;
-		$this->_table      = $wpdb->prefix . MOBILE_BUILDER_TABLE_NAME . '_carts';
+		$this->_table = $wpdb->prefix . MOBILE_BUILDER_TABLE_NAME . '_carts';
 	}
 
 	/**
@@ -46,14 +46,14 @@ class Mobile_Builder_Session_Handler extends WC_Session {
 
 		$customer_id = $this->generate_customer_id();
 
-		if ( isset( $_REQUEST['cart_key'] ) ) {
+		if ( ! is_user_logged_in() && isset( $_REQUEST['cart_key'] ) ) {
 			$customer_id = $_REQUEST['cart_key'];
 		}
 
-		$this->restore_data( $customer_id );
+		$this->restore_cart( $customer_id );
 
-		add_action( 'shutdown', array( $this, 'save_data' ), 20 );
-		add_action( 'wp_logout', array( $this, 'destroy_session' ) );
+		add_action( 'shutdown', array( $this, 'save_cart' ), 20 );
+		add_action( 'wp_logout', array( $this, 'destroy_cart' ) );
 
 		if ( ! is_user_logged_in() ) {
 			add_filter( 'nonce_user_logged_out', array( $this, 'nonce_user_logged_out' ) );
@@ -76,7 +76,7 @@ class Mobile_Builder_Session_Handler extends WC_Session {
 	 *
 	 * @param $customer_id
 	 */
-	public function restore_data( $customer_id ) {
+	public function restore_cart( $customer_id ) {
 		global $wpdb;
 
 		$this->_customer_id = $customer_id;
@@ -85,6 +85,22 @@ class Mobile_Builder_Session_Handler extends WC_Session {
 
 		$this->_data = maybe_unserialize( $value );
 
+	}
+
+	/**
+	 * Delete the cart from the database.
+	 *
+	 * @access public
+	 *
+	 * @param string $customer_id Customer ID.
+	 *
+	 * @global $wpdb
+	 */
+	public function delete_cart( $customer_id ) {
+		global $wpdb;
+
+		// Delete cart from database.
+		$wpdb->delete( $this->_table, array( 'cart_key' => $customer_id ) );
 	}
 
 	/**
@@ -113,7 +129,7 @@ class Mobile_Builder_Session_Handler extends WC_Session {
 	/**
 	 * Save data.
 	 */
-	public function save_data() {
+	public function save_cart() {
 
 		global $wpdb;
 
@@ -135,10 +151,11 @@ class Mobile_Builder_Session_Handler extends WC_Session {
 	}
 
 	/**
-	 * Destroy all session data.
+	 * Destroy all cart data.
 	 */
-	public function destroy_session() {
+	public function destroy_cart() {
 		wc_empty_cart();
+		$this->delete_cart( $this->_customer_id );
 		$this->_data  = array();
 		$this->_dirty = false;
 	}
