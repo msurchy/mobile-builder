@@ -42,6 +42,12 @@ Yeah! The app support multi languages
 
 == Changelog ==
 
+= 1.1.4 =
+
+* Fixed: Functions wcfm_get_vendor_id_by_post not exist
+* Fixed: warning permission_callback function
+* Improved: Cart REST API
+
 = 1.1.3 =
 
 * Fixed: Undefined index: vendor_id

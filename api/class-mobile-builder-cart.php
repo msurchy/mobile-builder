@@ -124,16 +124,10 @@ class Mobile_Builder_Cart {
 			'permission_callback' => array( $this, 'user_permissions_check' ),
 		) );
 
-		register_rest_route( $this->namespace, 'auto-login', array(
-			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => array( $this, 'auto_login' ),
-			'permission_callback' => array( $this, 'user_permissions_check' ),
-		) );
-
 		register_rest_route( $this->namespace, 'analytic', array(
-			'methods'  => WP_REST_Server::CREATABLE,
-			'callback' => array( $this, 'analytic' ),
-			'permission_callback'   => '__return_true',
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'analytic' ),
+			'permission_callback' => '__return_true',
 		) );
 
 	}
@@ -164,31 +158,71 @@ class Mobile_Builder_Cart {
 		return $data;
 	}
 
-	public function auto_login( $request ) {
+	/**
+	 * Restore cart for web
+	 */
+	public function load_cart_action() {
 
-		$theme    = $request->get_param( 'theme' );
-		$currency = $request->get_param( 'currency' );
+		global $wpdb;
 
-		$user_id = get_current_user_id();
-		$user    = get_user_by( 'id', $user_id );
-		wp_set_current_user( $user_id, $user->user_login );
-		wp_set_auth_cookie( $user_id );
+		$table = $wpdb->prefix . MOBILE_BUILDER_TABLE_NAME . '_carts';
 
-		wp_redirect( wc_get_checkout_url() . "?mobile=1&theme=$theme&currency=$currency" );
-		exit;
+		if ( ! isset( $_REQUEST['cart-key'] ) ) {
+			return;
+		}
+
+		if ( WC()->is_rest_api_request() ) {
+			return;
+		}
+
+		wc_nocache_headers();
+
+		$cart_key = trim( wp_unslash( $_REQUEST['cart-key'] ) );
+
+		$value = $wpdb->get_var( $wpdb->prepare( "SELECT cart_value FROM $table WHERE cart_key = %s", $cart_key ) );
+
+		$cart_data = maybe_unserialize( $value );
+
+		// Clear old cart
+		WC()->cart->empty_cart();
+
+		// Set new cart data
+		WC()->session->set( 'cart', maybe_unserialize( $cart_data['cart'] ) );
+		WC()->session->set( 'cart_totals', maybe_unserialize( $cart_data['cart_totals'] ) );
+		WC()->session->set( 'applied_coupons', maybe_unserialize( $cart_data['applied_coupons'] ) );
+		WC()->session->set( 'coupon_discount_totals', maybe_unserialize( $cart_data['coupon_discount_totals'] ) );
+		WC()->session->set( 'coupon_discount_tax_totals', maybe_unserialize( $cart_data['coupon_discount_tax_totals'] ) );
+		WC()->session->set( 'removed_cart_contents', maybe_unserialize( $cart_data['removed_cart_contents'] ) );
+		WC()->session->set( 'customer', maybe_unserialize( $cart_data['customer'] ) );
+
+		if ( ! session_id() ) {
+			session_start();
+		}
+		$_SESSION['cart-key'] = $cart_key;
+
 	}
 
-	public function simulate_as_not_rest( $is_rest_api_request ) {
-
-		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
-			return $is_rest_api_request;
+	/**
+	 *
+	 * Handle action after user go to checkout success page
+	 *
+	 * @param $order_id
+	 *
+	 */
+	public function handle_checkout_success( $order_id ) {
+		if ( ! session_id() ) {
+			session_start();
 		}
 
-		if ( false === strpos( $_SERVER['REQUEST_URI'], $this->namespace ) ) {
-			return $is_rest_api_request;
-		}
+		if ( ! is_null( $_SESSION['cart-key'] ) ) {
+			global $wpdb;
 
-		return false;
+			// Delete cart from database.
+			$wpdb->delete( $wpdb->prefix . MOBILE_BUILDER_TABLE_NAME . '_carts', array( 'cart_key' => $_SESSION['cart-key'] ) );
+
+			// unset cart key in session
+			unset( $_SESSION['cart-key'] );
+		}
 	}
 
 	public function mobile_builder_woocommerce_persistent_cart_enabled() {
@@ -231,11 +265,13 @@ class Mobile_Builder_Cart {
 				$customer_id = strval( get_current_user_id() );
 
 				// If the ID is not ZERO, then the user is logged in.
-				if ( $customer_id > 0 ) {
-					WC()->customer = new WC_Customer( $customer_id ); // Loads from database.
-				} else {
-					WC()->customer = new WC_Customer( $customer_id, true ); // Loads from session.
-				}
+//				if ( $customer_id > 0 ) {
+//					WC()->customer = new WC_Customer( $customer_id ); // Loads from database.
+//				} else {
+//					WC()->customer = new WC_Customer( $customer_id, true ); // Loads from session.
+//				}
+
+				WC()->customer = new WC_Customer( $customer_id, true ); // Loads from session
 
 				add_action( 'shutdown', array( WC()->customer, 'save' ), 10 );
 			}
@@ -317,8 +353,10 @@ class Mobile_Builder_Cart {
 			);
 
 			// Prepare data validate add-ons
-			foreach ( $cart_item_data['addons'] as $addon ) {
-				$product_addons[ 'addon-' . $addon['field_name'] ][] = $addon['value'];
+			if ( ! is_null( $cart_item_data['addons'] ) ) {
+				foreach ( $cart_item_data['addons'] as $addon ) {
+					$product_addons[ 'addon-' . $addon['field_name'] ][] = $addon['value'];
+				}
 			}
 
 			$passed_validation = apply_filters( 'woocommerce_add_to_cart_validation', true, $product_id, $quantity, $product_addons );
@@ -336,7 +374,9 @@ class Mobile_Builder_Cart {
 				) );
 			}
 
-			return WC()->cart->get_cart_item( $cart_item_key );
+			return array(
+				"cart_key" => WC()->session->get_cart_key(),
+			);
 
 		} catch ( \Exception $e ) {
 			//do something when exception is thrown
