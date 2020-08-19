@@ -90,6 +90,8 @@ class Mobile_Builder_Auth {
 			$user = get_user_by( 'id', $user_id );
 			wp_set_current_user( $user_id, $user->user_login );
 			wp_set_auth_cookie( $user_id );
+		} else {
+			wp_logout();
 		}
 
 		wp_redirect( wc_get_checkout_url() . "?mobile=1&theme=$theme&currency=$currency&cart-key=$cart_key" );

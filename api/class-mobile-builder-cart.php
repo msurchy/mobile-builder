@@ -164,6 +164,7 @@ class Mobile_Builder_Cart {
 	public function load_cart_action() {
 
 		global $wpdb;
+
 		$table = $wpdb->prefix . MOBILE_BUILDER_TABLE_NAME . '_carts';
 
 		if ( ! isset( $_REQUEST['cart-key'] ) ) {
@@ -182,6 +183,10 @@ class Mobile_Builder_Cart {
 
 		$cart_data = maybe_unserialize( $value );
 
+		// Clear old cart
+		WC()->cart->empty_cart();
+
+		// Set new cart data
 		WC()->session->set( 'cart', maybe_unserialize( $cart_data['cart'] ) );
 		WC()->session->set( 'cart_totals', maybe_unserialize( $cart_data['cart_totals'] ) );
 		WC()->session->set( 'applied_coupons', maybe_unserialize( $cart_data['applied_coupons'] ) );
