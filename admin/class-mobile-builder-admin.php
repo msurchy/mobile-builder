@@ -97,12 +97,15 @@ class Mobile_Builder_Admin {
 			'media-upload'
 		), $this->version, true );
 
+		$license = maybe_unserialize( get_option( 'mobile_builder_license' ) );
+
 		wp_localize_script( $this->plugin_name, 'wp_rnlab_configs', array(
 				'api_nonce'   => wp_create_nonce( 'wp_rest' ),
 				'api_url'     => rest_url( '' ),
 				'plugin_name' => $this->plugin_name,
-				'app'         => 'foody',
 				'vendor'      => 'wcfm',
+				'app'         => isset( $license['app'] ) ? $license['app'] : '',
+				'license'     => isset( $license['license'] ) ? $license['license'] : '',
 			)
 		);
 
@@ -119,9 +122,9 @@ class Mobile_Builder_Admin {
 
 		register_rest_route( $namespace, $endpoint, array(
 			array(
-				'methods'  => \WP_REST_Server::READABLE,
-				'callback' => array( $this, 'get_template_config' ),
-				 'permission_callback'   => '__return_true',
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_template_config' ),
+				'permission_callback' => '__return_true',
 			),
 		) );
 
@@ -154,9 +157,9 @@ class Mobile_Builder_Admin {
 
 		register_rest_route( $namespace, $endpoint_configs, array(
 			array(
-				'methods'  => \WP_REST_Server::READABLE,
-				'callback' => array( $this, 'get_configs' ),
-				'permission_callback'   => '__return_true',
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_configs' ),
+				'permission_callback' => '__return_true',
 			),
 		) );
 
@@ -164,6 +167,15 @@ class Mobile_Builder_Admin {
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'update_configs' ),
+				'permission_callback' => array( $this, 'admin_permissions_check' ),
+				'args'                => array(),
+			),
+		) );
+
+		register_rest_route( $namespace, 'license', array(
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'add_license' ),
 				'permission_callback' => array( $this, 'admin_permissions_check' ),
 				'args'                => array(),
 			),
@@ -279,13 +291,36 @@ class Mobile_Builder_Admin {
 	 */
 	public function update_configs( $request ) {
 
-		$data   = $request->get_param( 'data' );
-		$status = false;
+		$data = $request->get_param( 'data' );
 
 		if ( get_option( 'mobile_builder_configs' ) ) {
 			$status = update_option( 'mobile_builder_configs', maybe_serialize( $data ) );
 		} else {
 			$status = add_option( 'mobile_builder_configs', maybe_serialize( $data ) );
+		}
+
+		return new WP_REST_Response( array( 'status' => $status ), 200 );
+	}
+
+	/**
+	 *
+	 * Add license code
+	 *
+	 * @param $request
+	 *
+	 * @return WP_REST_Response
+	 * @since    1.0.0
+	 */
+	public function add_license( $request ) {
+
+		$license = $request->get_param( 'data' );
+
+		return $license;
+
+		if ( get_option( 'mobile_builder_license' ) ) {
+			$status = update_option( 'mobile_builder_license', maybe_serialize( $license ) );
+		} else {
+			$status = add_option( 'mobile_builder_license', maybe_serialize( $license ) );
 		}
 
 		return new WP_REST_Response( array( 'status' => $status ), 200 );

@@ -42,6 +42,14 @@ Yeah! The app support multi languages
 
 == Changelog ==
 
+= 1.4.6 =
+
+* Added: Verify license
+
+= 1.4.5 =
+
+* Fixed: Missing file upload to Wordpress server
+
 = 1.1.4 =
 
 * Fixed: Functions wcfm_get_vendor_id_by_post not exist
