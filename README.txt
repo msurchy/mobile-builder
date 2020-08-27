@@ -42,6 +42,10 @@ Yeah! The app support multi languages
 
 == Changelog ==
 
+= 1.4.7 =
+
+* Fixed: not update license
+
 = 1.4.6 =
 
 * Added: Verify license

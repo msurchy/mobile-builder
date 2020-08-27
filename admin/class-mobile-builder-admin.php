@@ -315,13 +315,8 @@ class Mobile_Builder_Admin {
 
 		$license = $request->get_param( 'data' );
 
-		return $license;
-
-		if ( get_option( 'mobile_builder_license' ) ) {
-			$status = update_option( 'mobile_builder_license', maybe_serialize( $license ) );
-		} else {
-			$status = add_option( 'mobile_builder_license', maybe_serialize( $license ) );
-		}
+		delete_option( 'mobile_builder_license' );
+		$status = add_option( 'mobile_builder_license', maybe_serialize( $license ) );
 
 		return new WP_REST_Response( array( 'status' => $status ), 200 );
 	}
