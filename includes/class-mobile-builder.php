@@ -151,6 +151,7 @@ class Mobile_Builder {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'api/class-mobile-builder-auth.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'api/class-mobile-builder-cart.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'api/class-mobile-builder-vendor.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'api/class-mobile-builder-wcfm.php';
 
 		/**
 		 * Load library
@@ -225,6 +226,10 @@ class Mobile_Builder {
 		$this->loader->add_filter( 'posts_clauses', $plugin_api, 'mbd_product_distance', 501, 2 );
 		$this->loader->add_action( 'wcfmd_after_delivery_boy_assigned', $plugin_api, 'delivery_boy_assigned_notification', 10, 6 );
 		$this->loader->add_action( 'woocommerce_order_status_changed', $plugin_api, 'notification_order_status_changed', 10, 3 );
+
+		// WCFM
+		$wcfm_api = new Mobile_Builder_WCFM( $this->get_plugin_name(), $this->get_version() );
+		$this->loader->add_action( 'rest_api_init', $wcfm_api, 'add_api_routes', 10 );
 
 	}
 

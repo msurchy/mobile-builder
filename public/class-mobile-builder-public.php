@@ -1577,10 +1577,7 @@ class Mobile_Builder_Public {
 
 	public function determine_current_user( $user ) {
 		// Run only on REST API
-		$rest_url_prefix = rest_get_url_prefix();
-
-		$valid_rest_url = strpos( $_SERVER['REQUEST_URI'], $rest_url_prefix );
-		if ( ! $valid_rest_url ) {
+		if ( ! mobile_builder_is_rest_api_request() ) {
 			return $user;
 		}
 
@@ -1589,11 +1586,6 @@ class Mobile_Builder_Public {
 		if ( is_wp_error( $token ) ) {
 			return $user;
 		}
-
-		// only read data to
-		// if (isset($token->data->read_only) && $token->data->read_only && $_SERVER['REQUEST_METHOD'] != "GET") {
-		//     return $user;
-		// }
 
 		return $token->data->user_id;
 	}
