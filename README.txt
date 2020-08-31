@@ -42,6 +42,11 @@ Yeah! The app support multi languages
 
 == Changelog ==
 
+= 1.4.8 =
+
+* Fixed: Determine current user
+* Added: API for report vendor info
+
 = 1.4.7 =
 
 * Fixed: not update license
