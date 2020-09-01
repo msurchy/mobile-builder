@@ -129,8 +129,16 @@ function mobile_builder_is_rest_api_request() {
 		return false;
 	}
 
-	$rest_prefix         = trailingslashit( rest_get_url_prefix() );
-	$is_rest_api_request = ( false !== strpos( $_SERVER['REQUEST_URI'], $rest_prefix . 'mobile-builder/' ) );
+	$rest_prefix = trailingslashit( rest_get_url_prefix() );
+	$uri         = $_SERVER['REQUEST_URI'];
+	$allows      = array( 'mobile-builder/', 'wcfmmp/', 'dokan/' );
 
-	return $is_rest_api_request;
+	foreach ( $allows as $allow ) {
+		$check = strpos( $uri, $rest_prefix . $allow ) !== false;
+		if ( $check ) {
+			return true;
+		}
+	}
+
+	return false;
 }
