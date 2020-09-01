@@ -42,6 +42,10 @@ Yeah! The app support multi languages
 
 == Changelog ==
 
+= 1.4.9 =
+
+* Fixed: Allow Authentication user for Wcfm and Dokan thought mobile-builder
+
 = 1.4.8 =
 
 * Fixed: Determine current user
