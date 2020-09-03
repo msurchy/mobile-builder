@@ -131,7 +131,7 @@ function mobile_builder_is_rest_api_request() {
 
 	$rest_prefix = trailingslashit( rest_get_url_prefix() );
 	$uri         = $_SERVER['REQUEST_URI'];
-	$allows      = array( 'mobile-builder/', 'wcfmmp/', 'dokan/' );
+	$allows      = array( 'mobile-builder/', 'wcfmmp/', 'dokan/', 'wp/' );
 
 	foreach ( $allows as $allow ) {
 		$check = strpos( $uri, $rest_prefix . $allow ) !== false;
