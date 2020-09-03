@@ -42,24 +42,28 @@ Yeah! The app support multi languages
 
 == Changelog ==
 
-= 1.4.9 =
+= 1.2.0 =
+
+* Improved: Allow Authentication user for WP REST API thought mobile-builder
+
+= 1.1.9 =
 
 * Fixed: Allow Authentication user for Wcfm and Dokan thought mobile-builder
 
-= 1.4.8 =
+= 1.1.8 =
 
 * Fixed: Determine current user
 * Added: API for report vendor info
 
-= 1.4.7 =
+= 1.1.7 =
 
 * Fixed: not update license
 
-= 1.4.6 =
+= 1.1.6 =
 
 * Added: Verify license
 
-= 1.4.5 =
+= 1.1.5 =
 
 * Fixed: Missing file upload to Wordpress server
 
@@ -88,6 +92,6 @@ Yeah! The app support multi languages
 * Add wc validation in the add_to_cart function (Thanks @raaquino)
 * Get checkout user location config
 
-= 1.0 =
+= 1.0.0 =
 * Initial release.
 
