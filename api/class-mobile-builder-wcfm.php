@@ -66,21 +66,28 @@ class Mobile_Builder_WCFM {
 		register_rest_route( $namespace, 'wcfm-report-data', array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( $this, 'get_report_data' ),
-			'permission_callback' => '__return_true',
-		) );
-
-		register_rest_route( $namespace, 'wcfm-report-html', array(
-			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => array( $this, 'get_report_html' ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( $this, 'user_permissions_check' ),
 		) );
 
 		register_rest_route( $namespace, 'wcfm-report-chart', array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => array( $this, 'get_report_chart' ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( $this, 'user_permissions_check' ),
 		) );
 
+		register_rest_route( $namespace, 'wcfm-profile-settings', array(
+			'methods'             => WP_REST_Server::CREATABLE,
+			'callback'            => array( $this, 'wcfmmp_profile_settings' ),
+			'permission_callback' => array( $this, 'user_permissions_check' ),
+		) );
+
+	}
+
+	public function wcfmmp_profile_settings( $request ) {
+		$settings = $request->get_param( 'settings' );
+		$user_id  = get_current_user_id();
+
+		return update_user_meta( $user_id, 'wcfmmp_profile_settings', $settings );
 	}
 
 	/**
@@ -108,28 +115,7 @@ class Mobile_Builder_WCFM {
 	 *
 	 * @param $request
 	 *
-	 * @return bool|string
-	 * @since    1.0.0
-	 */
-	public function get_report_html( $request ) {
-		global $WCMp, $WCFM, $wpdb;
-
-		include_once( $WCFM->plugin_path . 'includes/reports/class-wcfmmarketplace-report-sales-by-date.php' );
-		$wcfm_report_sales_by_date = new WCFM_Marketplace_Report_Sales_By_Date( 'month' );
-		$wcfm_report_sales_by_date->calculate_current_range( 'month' );
-		$report_data = $wcfm_report_sales_by_date->get_report_data();
-
-		$wcfm_report_sales_by_date->get_main_chart();
-	}
-
-	/**
-	 *
-	 * Get report for vendors
-	 *
-	 * @param $request
-	 *
-	 * @return bool|string
-	 * @since    1.0.0
+	 * @return array
 	 */
 	public function get_report_chart( $request ) {
 		global $wp_locale, $wpdb, $WCFM, $WCFMmp;
@@ -137,6 +123,8 @@ class Mobile_Builder_WCFM {
 		include_once( $WCFM->plugin_path . 'includes/reports/class-wcfmmarketplace-report-sales-by-date.php' );
 		$wcfm_report_sales_by_date = new WCFM_Marketplace_Report_Sales_By_Date( 'month' );
 		$wcfm_report_sales_by_date->calculate_current_range( 'month' );
+
+		$report_data = $wcfm_report_sales_by_date->get_report_data();
 
 		// Admin Fee Mode Commission
 		$admin_fee_mode = apply_filters( 'wcfm_is_admin_fee_mode', false );
@@ -322,7 +310,10 @@ class Mobile_Builder_WCFM {
 		              . '}';
 
 
-		return json_decode($chart_data);
+		return array(
+			'chart' => json_decode( $chart_data ),
+			'total' => $report_data,
+		);
 	}
 
 	/**
@@ -335,7 +326,9 @@ class Mobile_Builder_WCFM {
 	 * @since 1.0.0
 	 */
 	public function user_permissions_check( $request ) {
-		return true;
+		$user = wp_get_current_user();
+
+		return $user->exists();
 	}
 
 }
