@@ -84,10 +84,11 @@ class Mobile_Builder_WCFM {
 	}
 
 	public function wcfmmp_profile_settings( $request ) {
-		$settings = $request->get_param( 'settings' );
-		$user_id  = get_current_user_id();
+		$key     = $request->get_param( 'key' );
+		$data    = $request->get_param( 'data' );
+		$user_id = get_current_user_id();
 
-		return update_user_meta( $user_id, 'wcfmmp_profile_settings', $settings );
+		return update_user_meta( $user_id, $key, $data );
 	}
 
 	/**
