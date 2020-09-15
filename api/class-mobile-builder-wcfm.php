@@ -88,7 +88,19 @@ class Mobile_Builder_WCFM {
 		$data    = $request->get_param( 'data' );
 		$user_id = get_current_user_id();
 
-		return update_user_meta( $user_id, $key, $data );
+		$accept = [ 'wcfmmp_profile_settings', 'store_name', 'wcfmmp_store_name', '_store_description' ];
+
+		if ( in_array( $key, $accept ) ) {
+			return update_user_meta( $user_id, $key, $data );
+		}
+
+		return new WP_Error(
+			'not_allow_edit',
+			__( 'We not allow you edit that info.', "mobile-builder" ),
+			array(
+				'status' => 403,
+			)
+		);
 	}
 
 	/**
