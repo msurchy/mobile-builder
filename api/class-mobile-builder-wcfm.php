@@ -90,7 +90,7 @@ class Mobile_Builder_WCFM {
 
 		$accept = [ 'wcfmmp_profile_settings', 'store_name', 'wcfmmp_store_name', '_store_description' ];
 
-		if ( in_array( $key, $accept ) ) {
+		if ( in_array( $key, $accept ) || strpos( $key, 'mobile_builder' ) ) {
 			return update_user_meta( $user_id, $key, $data );
 		}
 
