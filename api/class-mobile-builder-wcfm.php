@@ -115,9 +115,11 @@ class Mobile_Builder_WCFM {
 	public function get_report_data( $request ) {
 		global $WCMp, $WCFM, $wpdb;
 
+		$range = $request->get_param( 'range' ) ? $request->get_param( 'range' ) : 'month';
+
 		include_once( $WCFM->plugin_path . 'includes/reports/class-wcfmmarketplace-report-sales-by-date.php' );
-		$wcfm_report_sales_by_date = new WCFM_Marketplace_Report_Sales_By_Date( 'month' );
-		$wcfm_report_sales_by_date->calculate_current_range( 'month' );
+		$wcfm_report_sales_by_date = new WCFM_Marketplace_Report_Sales_By_Date( $range );
+		$wcfm_report_sales_by_date->calculate_current_range( $range );
 
 		return $wcfm_report_sales_by_date->get_report_data();
 	}
@@ -133,9 +135,11 @@ class Mobile_Builder_WCFM {
 	public function get_report_chart( $request ) {
 		global $wp_locale, $wpdb, $WCFM, $WCFMmp;
 
+		$range = $request->get_param( 'range' ) ? $request->get_param( 'range' ) : 'month';
+
 		include_once( $WCFM->plugin_path . 'includes/reports/class-wcfmmarketplace-report-sales-by-date.php' );
-		$wcfm_report_sales_by_date = new WCFM_Marketplace_Report_Sales_By_Date( 'month' );
-		$wcfm_report_sales_by_date->calculate_current_range( 'month' );
+		$wcfm_report_sales_by_date = new WCFM_Marketplace_Report_Sales_By_Date( $range );
+		$wcfm_report_sales_by_date->calculate_current_range( $range );
 
 		$report_data = $wcfm_report_sales_by_date->get_report_data();
 
